@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAlpha- To-Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="h-full min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+    <!-- Main App Container -->
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold header-accent">
+                <i class="fas fa-leaf mr-2"></i>To-do list Tasks
+            </h1>
+            <p class="text-lg text-gray-600 mt-2">Your  productivity companion</p>
+        </header>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - Task Input -->
+            <div class="lg:col-span-1">
+                <div class="app-container p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                        <i class="fas fa-plus-circle mr-2"></i>Add New Task
+                    </h2>
+                    <form id="task-form" class="space-y-4">
+                        <div>
+                            <label for="task-title" class="block text-sm font-medium text-gray-700 mb-1">Task Title</label>
+                            <input type="text" id="task-title" required
+                                class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none"
+                                placeholder="What needs to be done?">
+                        </div>
+                        <div>
+                            <label for="task-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                            <select id="task-priority"
+                                class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="task-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                            <input type="date" id="task-due-date"
+                                class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="task-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="task-description" rows="3"
+                                class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none"
+                                placeholder="Additional details"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="btn-primary px-6 py-2 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-white">
+                                <i class="fas fa-plus mr-2"></i>Add Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Task Stats -->
+                <div class="app-container p-5">
+                    <h2 class="text-xl font-semibold mb-3 text-gray-700">
+                        <i class="fas fa-chart-pie mr-2"></i>Task Stats
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Total Tasks:</span>
+                            <span id="task-count" class="font-bold">0</span>
+                        </div>
+                        <div class="flex space-x-4 justify-center">
+                            <button id="sort-newest" class="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200">
+                                <i class="fas fa-arrow-up mr-1"></i>Newest
+                            </button>
+                            <button id="sort-oldest" class="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200">
+                                <i class="fas fa-arrow-down mr-1"></i>Oldest
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column - Task List -->
+            <div class="lg:col-span-2">
+                <div class="app-container p-5 mb-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-gray-700">
+                            <i class="fas fa-tasks mr-2"></i>Your Tasks
+                        </h2>
+                        <div class="flex space-x-2 mt-2 sm:mt-0">
+                            <input type="text" id="task-search" placeholder=" Search tasks..."
+                                class="input-field w-full sm:w-48 px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                            <button id="clear-completed" class="px-3 py-2 rounded-lg bg-red-100 text-red-800 hover:bg-red-200 hidden">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Task Filters -->
+                    <div class="flex space-x-2 mb-4">
+                        <button data-filter="all" class="filter-btn px-3 py-1 rounded-lg bg-green-100 text-green-800">
+                            <i class="fas fa-list mr-1"></i>All
+                        </button>
+                        <button data-filter="active" class="filter-btn px-3 py-1 rounded-lg bg-yellow-100 text-yellow-800">
+                            <i class="fas fa-circle-notch mr-1"></i>Active
+                        </button>
+                        <button data-filter="completed" class="filter-btn px-3 py-1 rounded-lg bg-purple-100 text-purple-800">
+                            <i class="fas fa-check mr-1"></i>Completed
+                        </button>
+                    </div>
+                    <!-- Task List -->
+                    <div id="task-list" class="space-y-2">
+                        <!-- Tasks will be dynamically inserted here -->
+                        <div id="empty-state" class="p-8 text-center">
+                            <i class="fas fa-cloud text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-700">No tasks yet</h3>
+                            <p class="mt-1 text-sm text-gray-500">Add your first task to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Task Item Template (Hidden) -->
+    <template id="task-template">
+        <div class="task-item group p-4">
+            <div class="flex items-start">
+                <button class="complete-btn mt-1 mr-3 flex-shrink-0">
+                    <i class="far fa-circle text-gray-400 group-hover:text-green-500 text-lg complete-icon"></i>
+                    <i class="fas fa-check-circle text-green-500 text-lg completed-icon hidden"></i>
+                </button>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start">
+                        <h3 class="task-title font-medium text-gray-800"></h3>
+                        <div class="task-priority text-xs font-semibold px-2 py-1 rounded-full"></div>
+                    </div>
+                    <p class="task-description mt-1 text-sm text-gray-600"></p>
+                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                        <i class="far fa-calendar-alt mr-1"></i>
+                        <span class="task-due-date"></span>
+                        <span class="mx-2">•</span>
+                        <i class="far fa-clock mr-1"></i>
+                        <span class="task-created-at"></span>
+                    </div>
+                </div>
+                <div class="ml-3 flex-shrink-0 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="edit-btn p-1 text-gray-500 hover:text-purple-500">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="delete-btn p-1 text-gray-500 hover:text-red-500">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- Edit Task Modal (Hidden by default) -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+        <div class="app-container rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-800">
+                    <i class="fas fa-edit mr-2 text-purple-500"></i>Edit Task
+                </h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-task-id">
+                <div>
+                    <label for="edit-task-title" class="block text-sm font-medium text-gray-700 mb-1">Task Title*</label>
+                    <input type="text" id="edit-task-title" required
+                        class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="edit-task-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                        <select id="edit-task-priority"
+                            class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-task-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                        <input type="date" id="edit-task-due-date"
+                            class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label for="edit-task-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="edit-task-description" rows="3"
+                        class="input-field w-full px-4 py-2 rounded-lg focus:ring-0 focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancel-edit"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="btn-primary px-4 py-2 rounded-lg text-white">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
